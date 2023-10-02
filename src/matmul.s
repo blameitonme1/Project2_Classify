@@ -29,22 +29,30 @@ matmul:
 
     # Error checks
     # check dimensions
-    lw t1, exit_code1
+    # prologue
+    # Prologue
+    addi sp, sp, -36
+    sw ra, 0(sp)
+    sw s0, 4(sp)
+    sw s1, 8(sp)
+    sw s2, 12(sp)
+    sw s3, 16(sp)
+    sw s4, 20(sp)
+    sw s5, 24(sp)
+    sw s6, 28(sp)
+    sw s7, 32(sp)
     addi t0, x0, 1
-    blt a1, t0, exit
-    blt a2, t0, exit
-    lw t1, exit_code2
+    blt a1, t0, exitc1
+    blt a2, t0, exitc1
     addi t0, x0, 1
-    blt a4, t0, exit
-    blt a5, t0, exit
-    lw t1, exit_code3
-    bne a2, a4, exit
+    blt a4, t0, exitc2
+    blt a5, t0, exitc2
+    bne a2, a4, exitc3
     # Prologue
     # d[i,j], t0 -> i, t1 -> j, save a0 when call dot
     # i <= a1, j <= a5
     addi t0, x0, 0
     addi t1, x0, 0
-    mv s5, ra
 outer_loop_start:
     bge t0, a1, outer_loop_end
     j inner_loop_start
@@ -99,10 +107,24 @@ inner_loop_end:
     j outer_loop_start
 outer_loop_end:
     # Epilogue
-    mv ra,s5
+    # Epilogue
+    lw ra, 0(sp)
+    lw s0, 4(sp)
+    lw s1, 8(sp)
+    lw s2, 12(sp)
+    lw s3, 16(sp)
+    lw s4, 20(sp)
+    lw s5, 24(sp)
+    lw s6, 28(sp)
+    lw s7, 32(sp)
+	addi sp, sp, 36
     ret
-exit: 
-    add a0, t1, x0
-    li a7, 93 
-    ecall
-    ret
+exitc1:
+    li a1,2
+    jal exit2
+exitc2:
+    li a1,3
+    jal exit2
+exitc3:
+    li a1,4
+    jal exit2

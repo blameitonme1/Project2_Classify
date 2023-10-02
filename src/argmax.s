@@ -1,6 +1,4 @@
 .globl argmax
-.data 
-exit_code: .word 7
 .text
 # =================================================================
 # FUNCTION: Given a int vector, return the index of the largest
@@ -44,10 +42,8 @@ next:
     addi t0, t0, 1
     j loop_continue
 exit:
-    lw a0, exit_code 
-    li a7, 93 
-    ecall
-    ret
+    li a1, 7
+    jal exit2
 loop_end:
     # Epilogue
     add a0, x0, t4
